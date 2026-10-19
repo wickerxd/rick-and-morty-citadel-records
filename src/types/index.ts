@@ -36,3 +36,17 @@ export interface Location extends LocationRef {
   url: string;
   created: string;
 }
+
+const Menu = {
+  Home: { label: "Home", path: "/" },
+  Episodes: { label: "Episodes", path: "/episode" },
+  Characters: { label: "Characters", path: "/character" },
+  Location: { label: "Locations", path: "/location" },
+} as const;
+
+export type MenuItem = keyof typeof Menu;
+
+export const ButtonType = {
+  Primary: "primary",
+  Secondary: "secondary",
+} as const;

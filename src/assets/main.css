@@ -1,0 +1,60 @@
+:root {
+  --bg: #0a0f14;
+  --surface: #121820;
+  --surface-active: #1b3320;
+  --border: #222b36;
+  --border-strong: #2f3846;
+
+  --text: #e8eef5;
+  --text-body: #c4ceda;
+  --text-muted: #a7b3c2;
+
+  --accent: #9bea5f;
+  --accent-deep: #1f6f3a;
+  --on-accent: #0a0f14;
+
+  --status-dead: #ff6b6b;
+  --status-unknown: #a7b3c2;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Sans", sans-serif;
+}
+h1,
+h2,
+h3 {
+  font-family: "Space Grotesk", sans-serif;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}

@@ -1,9 +1,9 @@
 <template>
   <header>Home</header>
 
-  <section class="character_list" v-if="characters.length > 0">
+  <section class="character_list" v-if="data.results.length > 0">
     <character-card
-      v-for="(char, index) in characters"
+      v-for="(char, index) in data.results"
       :key="index"
       :character="char"
     ></character-card>
@@ -11,21 +11,21 @@
 </template>
 
 <script setup lang="ts">
+import { api } from "@/api/client";
 import CharacterCard from "@/components/CharacterCard.vue";
 import type { Character } from "@/types";
-import { ref } from "vue";
+import { useQuery } from "@tanstack/vue-query";
+import { onMounted, ref } from "vue";
 
 const characters = ref<Character[]>([]);
+const { isPending, isError, data, error } = useQuery({
+  queryKey: ["todos"],
+  queryFn: useCharacters,
+});
 
-const doGetChars = fetch("https://rickandmortyapi.com/api/character")
-  .then((items) => {
-    return items.json();
-  })
-  .then((val) => {
-    characters.value = val.results;
-  });
-
-console.log(await doGetChars);
+function useCharacters() {
+  return api.get("character");
+}
 </script>
 
 <style scoped>

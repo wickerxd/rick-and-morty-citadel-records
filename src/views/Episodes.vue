@@ -21,8 +21,6 @@ const doGetEpisodes = fetch("https://rickandmortyapi.com/api/episode")
   .then((val) => {
     episodes.value = val.results;
   });
-
-console.log(await doGetEpisodes);
 </script>
 
 <style scoped></style>
