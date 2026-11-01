@@ -50,3 +50,5 @@ export const ButtonType = {
   Primary: "primary",
   Secondary: "secondary",
 } as const;
+
+export type ButtonType = (typeof ButtonType)[keyof typeof ButtonType];
