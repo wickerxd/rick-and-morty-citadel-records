@@ -1,8 +1,8 @@
 <template>
-  <Suspense>
-    <div class="container">
-      <header class="header-item">
-        <h1 class="main-title">
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <RouterLink to="/" class="brand" aria-label="C-137 Explorer home">
           <svg
             width="28"
             height="28"
@@ -15,69 +15,82 @@
             <circle cx="14" cy="14" r="11" />
             <circle cx="14" cy="14" r="5" />
           </svg>
-          <router-link to="/">Citadel Directory</router-link>
-        </h1>
+          <span>C-137 Explorer</span>
+        </RouterLink>
 
-        <nav class="menu-items">
-          <router-link class="menu-item" to="/characters"
-            >Characters</router-link
-          >
-          <router-link class="menu-item" to="/locations">Locations</router-link>
-          <router-link class="menu-item" to="/episodes">Episodes</router-link>
+        <nav class="site-nav" aria-label="Main">
+          <NavLink :to="{ name: 'characters' }">Characters</NavLink>
+          <NavLink :to="{ name: 'episodes' }">Episodes</NavLink>
+          <NavLink :to="{ name: 'locations' }">Locations</NavLink>
         </nav>
-      </header>
+      </div>
+    </header>
 
+    <main class="container site-main">
       <RouterView />
-    </div>
-  </Suspense>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
+import NavLink from "@/components/NavLink.vue";
 </script>
 
 <style scoped>
-.header-item {
+.site-header {
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header__inner {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  justify-content: space-between;
+  gap: var(--space-2);
+  padding-block: var(--space-4) var(--space-2);
+}
 
-  @media (min-width: 768px) {
+@media (min-width: 768px) {
+  .site-header__inner {
     flex-direction: row;
     align-items: center;
-  }
-}
-.menu-items {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  justify-content: space-around;
-
-  @media (min-width: 768px) {
-    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: 20px;
   }
 }
 
-.menu-item {
-  padding: 12px 16px;
-  border-radius: 10px;
-}
-.menu-item:hover,
-.menu-item:focus-visible {
-  color: var(--accent);
-}
-.menu-item.router-link-active {
-  background: var(--surface-active);
-  color: var(--accent);
-}
-
-.main-title {
-  color: var(--accent);
-  display: flex;
-  flex-direction: row;
+.brand {
+  display: inline-flex;
+  width: fit-content;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-3);
+  color: var(--accent);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
   white-space: nowrap;
+}
+
+.site-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+@media (min-width: 768px) {
+  .site-nav {
+    justify-content: flex-start;
+    gap: var(--space-2);
+  }
+}
+
+.site-main {
+  padding-block: var(--space-4) var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .site-main {
+    padding-block: var(--space-5) var(--space-8);
+  }
 }
 </style>

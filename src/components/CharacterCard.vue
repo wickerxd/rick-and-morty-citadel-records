@@ -1,82 +1,77 @@
 <template>
-  <div class="character_card">
-    <img :src="character.image" alt="" />
-    <section class="character_details">
-      <p>{{ character.name }}</p>
-      <RouterLink :to="`/characters/${character.id}`" class="character_button"
-        >More info</RouterLink
-      >
-    </section>
-  </div>
+  <article class="character-card">
+    <RouterLink
+      :to="{ name: 'character-detail', params: { characterId: character.id } }"
+      class="character-card__link"
+    >
+      <img
+        class="character-card__image"
+        :src="character.image"
+        :alt="`Portrait of ${character.name}`"
+        width="300"
+        height="300"
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      />
+      <div class="character-card__body">
+        <h2 class="character-card__name">{{ character.name }}</h2>
+        <p class="character-card__meta">{{ character.species }}</p>
+      </div>
+    </RouterLink>
+  </article>
 </template>
 
 <script setup lang="ts">
-import { type Character } from "@/types/index.ts";
+import type { Character } from "@/types";
 
-const props = defineProps<{ character: Character }>();
+defineProps<{ character: Character }>();
 </script>
 
 <style scoped>
-p {
-  margin: 0;
+.character-card {
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
 }
 
-.character_card {
+.character-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.character-card__link {
   display: flex;
+  height: 100%;
   flex-direction: column;
-  gap: 1rem;
-  border-radius: 0.75rem;
-  border-width: 1px !important;
-  border-style: solid;
-  border-color: #ef4444;
-  max-height: 450px;
-  max-width: 250px;
 }
 
-.character_details {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border-width: 1px;
-  border-color: #000000;
+.character-card__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--border);
 }
 
-.character_button {
-  margin-left: auto;
-  width: fit-content;
-  padding: 0.5em;
-  border-radius: 0.5rem;
-  border-width: 1px;
-  border-color: #000000;
+.character-card__body {
+  padding: 14px;
 }
 
-@media (min-width: 320px) {
-  .character_card {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    border-radius: 0.75rem;
-    border-width: 1px !important;
-    border-style: solid;
-    border-color: #ef4444;
-    max-height: 450px;
-    max-width: 250px;
-  }
+.character-card__name {
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-@media (min-width: 900px) {
-  .character_card {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    border-radius: 0.75rem;
-    border-width: 1px !important;
-    border-style: solid;
-    border-color: #ef4444;
-    max-height: 450px;
-    max-width: 250px;
-  }
+.character-card__meta {
+  margin-top: var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
 }
 </style>

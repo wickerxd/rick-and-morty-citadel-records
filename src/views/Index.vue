@@ -1,105 +1,91 @@
 <template>
-  <section class="main_items">
-    <section class="hero_section">
-      <h2 class="hero_title">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__content">
+      <h1 id="hero-title" class="hero-title">
         Explore the <span>Rick and Morty</span> Universe
-      </h2>
+      </h1>
       <p class="hero-intro">
         Discover characters, episodes and locations across the multiverse.
       </p>
 
-      <section class="action_buttons">
-        <ActionButton
-          :type="ButtonType.Primary"
-          :text="primaryTile"
-        ></ActionButton>
+      <div class="hero-actions">
+        <ActionButton :to="{ name: 'characters' }" text="Browse Characters" />
         <ActionButton
           :type="ButtonType.Secondary"
-          :text="secondaryTile"
-        ></ActionButton>
-      </section>
-    </section>
+          :to="{ name: 'episodes' }"
+          text="View Episodes"
+        />
+      </div>
+    </div>
 
-    <Portal></Portal>
+    <Portal />
   </section>
 </template>
 
 <script setup lang="ts">
-import Portal from "@/components/Portal.vue";
 import ActionButton from "@/components/ActionButton.vue";
+import Portal from "@/components/Portal.vue";
 import { ButtonType } from "@/types";
-import { ref } from "vue";
-
-const primaryTile = ref("Browse Characters");
-const secondaryTile = ref("View Episodes");
 </script>
-<style scoped>
-.main_items {
-  display: flex;
-  flex-direction: row;
-  gap: 0.25rem;
-  justify-content: space-between;
 
-  /* @media (min-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-  } */
-}
-.hero_section {
+<style scoped>
+.hero {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-6);
+}
 
-  /* @media (min-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-  } */
+@media (min-width: 900px) {
+  .hero {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+  }
+}
+
+.hero__content {
+  display: flex;
+  max-width: 36rem;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
 .hero-title {
-  margin: 0;
-  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2.375rem, 8vw, 4rem);
   font-weight: 700;
-  font-size: 64px;
-  line-height: 1.05;
   letter-spacing: -1px;
-  color: var(--text);
+  line-height: 1.05;
 }
+
 .hero-title span {
   color: var(--accent);
 }
 
 .hero-intro {
-  margin: 0;
-  font-size: 18px;
+  max-width: 420px;
   color: var(--text-muted);
-  max-width: 420px;
+  font-size: 1.125rem;
 }
 
-@media (max-width: 640px) {
-  .hero-title {
-    font-size: 38px;
-  }
-  .hero-intro {
-    font-size: 16px;
-  }
-}
-
-.action_buttons {
+.hero-actions {
   display: flex;
-  flex-direction: row;
-  gap: 1rem;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
-.hero-intro {
-  margin: 0;
-  font-size: 18px;
-  color: var(--text-muted); /* #A7B3C2 */
-  max-width: 420px;
+.hero-actions :deep(.btn) {
+  width: 100%;
 }
 
-@media (max-width: 640px) {
-  .hero-intro {
-    font-size: 16px;
+@media (min-width: 640px) {
+  .hero-actions {
+    flex-direction: row;
+  }
+
+  .hero-actions :deep(.btn) {
+    width: auto;
   }
 }
 </style>
