@@ -1,3 +1,21 @@
+export const CHARACTER_STATUSES = ["Alive", "Dead", "unknown"] as const;
+export type CharacterStatus = (typeof CHARACTER_STATUSES)[number];
+
+export const CHARACTER_GENDERS = [
+  "Female",
+  "Male",
+  "Genderless",
+  "unknown",
+] as const;
+export type CharacterGender = (typeof CHARACTER_GENDERS)[number];
+
+export type CharacterStatusFilter = "All" | CharacterStatus;
+
+export interface LocationRef {
+  name: string;
+  url: string;
+}
+
 export interface Character {
   id: number;
   name: string;
@@ -13,15 +31,9 @@ export interface Character {
   created: string;
 }
 
-type CharacterStatus = "Alive" | "Dead" | "unknown";
-type CharacterGender = "Female" | "Male" | "Genderless" | "unknown";
-
-export interface LocationRef {
+export interface Location {
   id: number;
   name: string;
-}
-
-export interface Location extends LocationRef {
   type: string;
   dimension: string;
   residents: string[];
@@ -29,22 +41,32 @@ export interface Location extends LocationRef {
   created: string;
 }
 
-export interface Location extends LocationRef {
-  type: string;
-  dimension: string;
-  residents: string[];
+export interface Episode {
+  id: number;
+  name: string;
+  air_date: string;
+  episode: string;
+  characters: string[];
   url: string;
   created: string;
 }
 
-const Menu = {
-  Home: { label: "Home", path: "/" },
-  Episodes: { label: "Episodes", path: "/episode" },
-  Characters: { label: "Characters", path: "/character" },
-  Location: { label: "Locations", path: "/location" },
-} as const;
+export interface ApiInfo {
+  count: number;
+  pages: number;
+  next: string | null;
+  prev: string | null;
+}
 
-export type MenuItem = keyof typeof Menu;
+export interface PaginatedResponse<T> {
+  info: ApiInfo;
+  results: T[];
+}
+
+export interface CharacterFilters {
+  name?: string;
+  status?: CharacterStatus;
+}
 
 export const ButtonType = {
   Primary: "primary",

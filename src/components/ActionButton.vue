@@ -1,6 +1,13 @@
 <template>
-  <button class="btn" :class="classType">
-    {{ text }}
+  <component
+    :is="to ? RouterLink : 'button'"
+    :to="to"
+    :type="to ? undefined : 'button'"
+    :disabled="to ? undefined : disabled"
+    :class="['btn', classType]"
+    @click="onClick"
+  >
+    <span>{{ text }}</span>
     <svg
       v-if="type === ButtonType.Primary"
       width="18"
@@ -13,77 +20,81 @@
     >
       <path d="M4 10h12M11 5l5 5-5 5"></path>
     </svg>
-  </button>
+  </component>
 </template>
 
 <script setup lang="ts">
-import { ButtonType } from "@/types";
 import { computed } from "vue";
+import { RouterLink, type RouteLocationRaw } from "vue-router";
+import { ButtonType } from "@/types";
 
-interface Props {
-  type: ButtonType;
-  text: string;
+const props = withDefaults(
+  defineProps<{
+    type?: ButtonType;
+    text: string;
+    to?: RouteLocationRaw;
+    disabled?: boolean;
+  }>(),
+  {
+    type: ButtonType.Primary,
+    disabled: false,
+  },
+);
+
+const emit = defineEmits<{ click: [event: MouseEvent] }>();
+
+const classType = computed(() =>
+  props.type === ButtonType.Primary ? "btn-primary" : "btn-secondary",
+);
+
+function onClick(event: MouseEvent) {
+  emit("click", event);
 }
-const props = defineProps<Props>();
-
-const classType = computed(() => {
-  return props.type === ButtonType.Primary ? "btn-primary" : "btn-secondary";
-});
 </script>
 
-<style>
+<style scoped>
 .btn {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
   height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   padding: 0 28px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  font-family: inherit;
-  font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
   transition:
     background-color 0.15s,
     border-color 0.15s,
-    color 0.15s;
+    color 0.15s,
+    opacity 0.15s;
 }
 
-.btn:focus-visible,
-.back-link:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .btn-primary {
+  border-color: var(--accent);
   background: var(--accent);
   color: var(--on-accent);
-  border: 1px solid var(--accent);
 }
-.btn-primary:hover {
-  background: #b3f283;
+
+.btn-primary:hover:not(:disabled) {
   border-color: #b3f283;
+  background: #b3f283;
   color: var(--on-accent);
 }
 
 .btn-secondary {
+  border-color: var(--border-strong);
   background: transparent;
-  border: 1px solid var(--border-strong);
   color: var(--text);
 }
-.btn-secondary:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 44px;
-  color: var(--text-muted);
-}
-.back-link:hover {
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--accent);
   color: var(--accent);
 }
 

@@ -4,10 +4,11 @@
 
 <style scoped>
 .portal {
-  flex: 1;
-  min-width: 300px;
+  width: 100%;
   max-width: 480px;
+  min-width: 0;
   aspect-ratio: 1 / 1;
+  margin-inline: auto;
   border-radius: 50%;
   background: radial-gradient(
     circle,
