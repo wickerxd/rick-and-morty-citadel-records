@@ -4,15 +4,7 @@
       :to="{ name: 'character-detail', params: { characterId: character.id } }"
       class="character-card__link"
     >
-      <img
-        class="character-card__image"
-        :src="character.image"
-        :alt="`Portrait of ${character.name}`"
-        width="300"
-        height="300"
-        loading="lazy"
-        referrerpolicy="no-referrer"
-      />
+      <CharacterImage :src="character.image" :name="character.name" />
       <div class="character-card__body">
         <h2 class="character-card__name">{{ character.name }}</h2>
         <p class="character-card__meta">{{ character.species }}</p>
@@ -22,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import CharacterImage from "@/components/CharacterImage.vue";
 import type { Character } from "@/types";
 
 defineProps<{ character: Character }>();
@@ -48,13 +41,6 @@ defineProps<{ character: Character }>();
   display: flex;
   height: 100%;
   flex-direction: column;
-}
-
-.character-card__image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  background: var(--border);
 }
 
 .character-card__body {

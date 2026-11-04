@@ -23,35 +23,22 @@
     <p v-else-if="isPending" class="state-message" role="status">
       Loading character…
     </p>
-    <p
+    <ErrorState
       v-else-if="isError || !selectedCharacter"
-      class="state-message state-message--error"
-      role="alert"
-    >
-      We couldn't load this character.
-    </p>
+      message="We couldn't load this character."
+      :retrying="isFetching"
+      @retry="refetch"
+    />
 
     <article v-else class="character-detail">
       <div class="character-detail__layout">
         <figure class="character-detail__portrait">
-          <img
-            v-if="selectedCharacter.image && !imageFailed"
+          <CharacterImage
             :src="selectedCharacter.image"
-            :alt="`Portrait of ${selectedCharacter.name}`"
-            width="300"
-            height="300"
-            loading="eager"
-            referrerpolicy="no-referrer"
-            @error="imageFailed = true"
+            :name="selectedCharacter.name"
+            eager
+            size="large"
           />
-          <span
-            v-else
-            class="character-detail__fallback"
-            role="img"
-            :aria-label="`Portrait unavailable for ${selectedCharacter.name}`"
-          >
-            {{ initials }}
-          </span>
         </figure>
 
         <div class="character-detail__content">
@@ -101,6 +88,8 @@ import { computed, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useCharacter } from "@/api/queries";
 import { useDebouncedValue } from "@/composables/useDebouncedValue";
+import CharacterImage from "@/components/CharacterImage.vue";
+import ErrorState from "@/components/ErrorState.vue";
 import SearchBar from "@/components/SearchBar.vue";
 import StatusIndicator from "@/components/StatusIndicator.vue";
 import { buildCharacterBio } from "@/utils/character";
@@ -117,29 +106,17 @@ const isValidId = computed(
   () => Number.isInteger(characterId.value) && characterId.value > 0,
 );
 
-const { data: selectedCharacter, isPending, isError } =
-  useCharacter(characterId);
+const {
+  data: selectedCharacter,
+  isPending,
+  isError,
+  isFetching,
+  refetch,
+} = useCharacter(characterId);
 
 const about = computed(() =>
   selectedCharacter.value ? buildCharacterBio(selectedCharacter.value) : "",
 );
-
-const initials = computed(() => {
-  const name = selectedCharacter.value?.name ?? "";
-
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-});
-
-const imageFailed = ref(false);
-
-watch(characterId, () => {
-  imageFailed.value = false;
-});
 
 const search = ref("");
 const debouncedSearch = useDebouncedValue(search);
@@ -179,31 +156,6 @@ watch(debouncedSearch, (value) => {
     width: clamp(180px, 28vw, 320px);
     flex: 0 0 auto;
   }
-}
-
-.character-detail__portrait img,
-.character-detail__fallback {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 12px;
-}
-
-.character-detail__portrait img {
-  object-fit: cover;
-  background: var(--surface);
-}
-
-.character-detail__fallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(circle at 30% 30%, #9bea5f66, transparent 48%),
-    linear-gradient(135deg, var(--accent-deep), var(--surface));
-  color: var(--accent);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(2.5rem, 8vw, 4rem);
-  font-weight: 700;
 }
 
 .character-detail__content {

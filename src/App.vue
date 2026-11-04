@@ -22,13 +22,33 @@
           <NavLink :to="{ name: 'characters' }">Characters</NavLink>
           <NavLink :to="{ name: 'episodes' }">Episodes</NavLink>
           <NavLink :to="{ name: 'locations' }">Locations</NavLink>
+          <NavLink :to="{ name: 'about' }">About</NavLink>
         </nav>
       </div>
     </header>
 
     <main class="container site-main">
-      <RouterView />
+      <RouterView v-slot="{ Component, route }">
+        <Transition name="page" mode="out-in">
+          <component :is="Component" :key="route.path" />
+        </Transition>
+      </RouterView>
     </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <p>
+          Fan-made explorer. Data from the
+          <a
+            href="https://rickandmortyapi.com"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Rick and Morty API </a
+          >.
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -38,6 +58,12 @@ import NavLink from "@/components/NavLink.vue";
 </script>
 
 <style scoped>
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
 .site-header {
   border-bottom: 1px solid var(--border);
 }
@@ -85,12 +111,46 @@ import NavLink from "@/components/NavLink.vue";
 }
 
 .site-main {
+  flex: 1;
   padding-block: var(--space-4) var(--space-8);
 }
 
 @media (min-width: 768px) {
   .site-main {
     padding-block: var(--space-5) var(--space-8);
+  }
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-5);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.site-footer a {
+  color: var(--accent);
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-link {
+  width: fit-content;
+}
+
+@media (min-width: 768px) {
+  .site-footer__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 </style>

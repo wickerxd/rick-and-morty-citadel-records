@@ -32,6 +32,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: "Locations · C-137 Explorer" },
   },
   {
+    path: "/about",
+    name: "about",
+    component: () => import("@/views/About.vue"),
+    meta: { title: "About · C-137 Explorer" },
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: () => import("@/views/NotFound.vue"),
