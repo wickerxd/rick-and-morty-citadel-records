@@ -14,9 +14,10 @@ defineProps<{ to: RouteLocationRaw }>();
 .nav-link {
   display: inline-flex;
   align-items: center;
-  padding: 12px 8px;
+  padding: 12px 4px;
   border-radius: 10px;
   color: var(--text-muted);
+  font-size: 0.875rem;
   transition:
     background-color 0.15s,
     color 0.15s;
@@ -34,6 +35,7 @@ defineProps<{ to: RouteLocationRaw }>();
 @media (min-width: 768px) {
   .nav-link {
     padding: 12px 16px;
+    font-size: 1rem;
   }
 }
 </style>

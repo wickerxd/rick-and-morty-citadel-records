@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/vue-query";
+import { keepPreviousData, useQuery } from "@tanstack/vue-query";
 import { computed, toValue, type MaybeRefOrGetter } from "vue";
 import { api, ApiError, type QueryParams } from "./client";
 import type {
@@ -37,11 +37,41 @@ async function fetchPage<T>(
   }
 }
 
+function wait(delay: number) {
+  return new Promise((resolve) => setTimeout(resolve, delay));
+}
+
+async function fetchPageWithRetry<T>(
+  path: string,
+  params: QueryParams,
+  signal?: AbortSignal,
+): Promise<PaginatedResponse<T>> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      return await fetchPage<T>(path, params, signal);
+    } catch (error) {
+      if (signal?.aborted) {
+        throw error;
+      }
+
+      lastError = error;
+
+      if (attempt === 0) {
+        await wait(350);
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 async function fetchAllPages<T>(
   path: string,
   signal?: AbortSignal,
 ): Promise<T[]> {
-  const firstPage = await fetchPage<T>(path, { page: 1 }, signal);
+  const firstPage = await fetchPageWithRetry<T>(path, { page: 1 }, signal);
   const remainingPages = Math.max(firstPage.info.pages - 1, 0);
 
   if (remainingPages === 0) {
@@ -50,7 +80,7 @@ async function fetchAllPages<T>(
 
   const pages = await Promise.all(
     Array.from({ length: remainingPages }, (_, index) =>
-      fetchPage<T>(path, { page: index + 2 }, signal),
+      fetchPageWithRetry<T>(path, { page: index + 2 }, signal),
     ),
   );
 
@@ -73,6 +103,7 @@ export function useCharactersPage(
         signal,
       );
     },
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -94,6 +125,7 @@ export function useAllEpisodes() {
   return useQuery({
     queryKey: queryKeys.allEpisodes,
     queryFn: ({ signal }) => fetchAllPages<Episode>("episode", signal),
+    retry: 0,
   });
 }
 
@@ -101,5 +133,6 @@ export function useAllLocations() {
   return useQuery({
     queryKey: queryKeys.allLocations,
     queryFn: ({ signal }) => fetchAllPages<Location>("location", signal),
+    retry: 0,
   });
 }

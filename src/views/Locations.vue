@@ -12,13 +12,12 @@
     <p v-if="isPending" class="state-message" role="status">
       Loading locations…
     </p>
-    <p
+    <ErrorState
       v-else-if="isError"
-      class="state-message state-message--error"
-      role="alert"
-    >
-      We couldn't load locations right now.
-    </p>
+      message="We couldn't load locations right now."
+      :retrying="isFetching"
+      @retry="refetch"
+    />
 
     <template v-else>
       <div
@@ -64,6 +63,7 @@ import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAllLocations } from "@/api/queries";
 import { useDebouncedValue } from "@/composables/useDebouncedValue";
+import ErrorState from "@/components/ErrorState.vue";
 import LocationCard from "@/components/LocationCard.vue";
 import SearchBar from "@/components/SearchBar.vue";
 import type { Location } from "@/types";
@@ -151,7 +151,7 @@ const selectedRange = computed<RangeId>(() =>
   isRangeId(route.query.range) ? route.query.range : "all",
 );
 
-const { data, isPending, isError } = useAllLocations();
+const { data, isPending, isError, isFetching, refetch } = useAllLocations();
 
 const sortedLocations = computed(() =>
   [...(data.value ?? [])].sort((a, b) => collator.compare(a.name, b.name)),

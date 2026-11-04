@@ -17,21 +17,25 @@
     <p v-if="isPending" class="state-message" role="status">
       Loading characters…
     </p>
-    <p
+    <ErrorState
       v-else-if="isError"
-      class="state-message state-message--error"
-      role="alert"
-    >
-      We couldn't load characters right now.
-    </p>
+      message="We couldn't load characters right now."
+      :retrying="isFetching"
+      @retry="refetch"
+    />
     <p v-else-if="characters.length === 0" class="state-message" role="status">
       No characters found.
     </p>
 
     <template v-else>
-      <p class="result-count">
-        {{ totalCount }} {{ totalCount === 1 ? "character" : "characters" }}
-      </p>
+      <div class="result-summary">
+        <p class="result-count">
+          {{ totalCount }} {{ totalCount === 1 ? "character" : "characters" }}
+        </p>
+        <p v-if="isFetching" class="fetch-status" role="status">
+          Updating characters…
+        </p>
+      </div>
 
       <ul class="character-grid" role="list">
         <li v-for="character in characters" :key="character.id">
@@ -54,6 +58,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useCharactersPage } from "@/api/queries";
 import { useDebouncedValue } from "@/composables/useDebouncedValue";
 import CharacterCard from "@/components/CharacterCard.vue";
+import ErrorState from "@/components/ErrorState.vue";
 import Pagination from "@/components/Pagination.vue";
 import SearchBar from "@/components/SearchBar.vue";
 import StatusFilter from "@/components/StatusFilter.vue";
@@ -97,7 +102,10 @@ const filters = computed<CharacterFilters>(() => ({
   status: status.value === "All" ? undefined : status.value,
 }));
 
-const { data, isPending, isError } = useCharactersPage(filters, page);
+const { data, isPending, isError, isFetching, refetch } = useCharactersPage(
+  filters,
+  page,
+);
 
 const characters = computed(() => data.value?.results ?? []);
 const totalPages = computed(() => data.value?.info.pages ?? 0);
@@ -119,9 +127,21 @@ watch(filters, (value) => {
 </script>
 
 <style scoped>
+.result-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+}
+
 .result-count {
   color: var(--text-muted);
   font-size: 0.875rem;
+}
+
+.fetch-status {
+  color: var(--accent);
+  font-size: 0.8125rem;
 }
 
 .character-grid {

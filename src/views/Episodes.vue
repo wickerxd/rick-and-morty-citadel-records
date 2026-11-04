@@ -12,13 +12,12 @@
     <p v-if="isPending" class="state-message" role="status">
       Loading episodes…
     </p>
-    <p
+    <ErrorState
       v-else-if="isError"
-      class="state-message state-message--error"
-      role="alert"
-    >
-      We couldn't load episodes right now.
-    </p>
+      message="We couldn't load episodes right now."
+      :retrying="isFetching"
+      @retry="refetch"
+    />
 
     <template v-else>
       <nav class="season-tabs" aria-label="Seasons">
@@ -60,6 +59,7 @@ import { RouterLink, useRoute, useRouter } from "vue-router";
 import { useAllEpisodes } from "@/api/queries";
 import { useDebouncedValue } from "@/composables/useDebouncedValue";
 import EpisodeRow from "@/components/EpisodeRow.vue";
+import ErrorState from "@/components/ErrorState.vue";
 import SearchBar from "@/components/SearchBar.vue";
 import type { Episode } from "@/types";
 
@@ -89,7 +89,7 @@ function getSeason(episode: Episode): number {
 const search = ref(getQueryString(route.query.q));
 const debouncedSearch = useDebouncedValue(search);
 
-const { data, isPending, isError } = useAllEpisodes();
+const { data, isPending, isError, isFetching, refetch } = useAllEpisodes();
 
 const seasonGroups = computed<SeasonGroup[]>(() => {
   const groups = new Map<number, Episode[]>();
